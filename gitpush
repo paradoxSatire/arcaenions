@@ -3,4 +3,7 @@ git add .
 echo -n "Enter a commit message: "
 read answer
 git commit -m "$answer"
-git push https://github.com/paradoxSatire/arcaenions && send "paradoxSatire"
+
+send "paradoxSatire"
+expect "Username for 'https://github.com':"
+git push https://github.com/paradoxSatire/arcaenions
