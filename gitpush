@@ -4,6 +4,8 @@ echo -n "Enter a commit message: "
 read answer
 git commit -m "$answer"
 
-send "paradoxSatire"
-expect "Username for 'https://github.com':"
-git push https://github.com/paradoxSatire/arcaenions
+expect -c "
+spawn git push https://github.com/paradoxSatire/arcaenions
+expect -nocase \"Username for 'https://github.com':\" {send \"paradoxSatire\r\"; interact}
+"
+
