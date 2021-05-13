@@ -3,5 +3,4 @@ git add .
 echo -n "Enter a commit message: "
 read answer
 git commit -m "$answer"
-git push https://github.com/paradoxSatire/arcaenions
-paradoxSatire
+git push https://github.com/paradoxSatire/arcaenions && echo "paradoxSatire"
