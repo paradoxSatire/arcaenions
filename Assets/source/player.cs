@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class player : MonoBehaviour
+public class player : MonoBehaviour, iDamageable
 {
 
     public KeyCode attackKey = KeyCode.Mouse0;
@@ -49,7 +49,13 @@ public class player : MonoBehaviour
     void Update()
     {
         if(healthBar.localScale.x > currentHealth/healthPool){
-            healthBar.localScale = new Vector2(healthBar.localScale.x - (.005f), 1f);
+            healthBar.localScale = new Vector2(healthBar.localScale.x - (.002f), 1f);
+        }
+        if(healthBar.localScale.x < currentHealth/healthPool){
+            healthBar.localScale = new Vector2(healthBar.localScale.x + (.002f), 1f);
+        }
+        if (healthBar.localScale.x <= 0){
+            Die();
         }
         GetInput();
         HandleAttack();
@@ -62,6 +68,25 @@ public class player : MonoBehaviour
     void OnDrawGizmosSelected(){
 Gizmos.DrawWireSphere(attackOriginMelee.position, attackRadiusMelee);
 }
+
+
+    void OnTriggerEnter2D(Collider2D other) {
+        if (other.name.Contains("Healer")) {
+            if(currentHealth < healthPool){            
+                currentHealth += 2;
+                other.gameObject.GetComponent<ParticleSystem>().Play();
+                StartCoroutine(destroyDelay(2f, other));
+                other.isTrigger = false;
+                if (currentHealth > healthPool){currentHealth = healthPool;}}
+        }
+    }
+
+    public virtual void ApplyDamage(float amount){
+        currentHealth -= amount;
+        //if (currentHealth <= 0){
+            //Die();
+        //}
+    }
 
     private void GetInput(){
         moveintentionX = Input.GetAxis(xMoveAxis);
@@ -100,6 +125,12 @@ Gizmos.DrawWireSphere(attackOriginMelee.position, attackRadiusMelee);
         rb2D.velocity = new Vector2(moveintentionX * speed, moveintentionY * speed);
     }
 
+    private void Die(){
+        transform.position = Vector2.zero;
+        currentHealth = healthPool;
+        healthBar.localScale = new Vector2(1f, 1f);
+    }
+
     private void HandleAttack(){
         if (timeUntilMeleeReady <= 0){
             if(attemptAttack){
@@ -118,4 +149,10 @@ Gizmos.DrawWireSphere(attackOriginMelee.position, attackRadiusMelee);
             timeUntilMeleeReady -= Time.deltaTime;
         }
     }
+
+    public IEnumerator destroyDelay(float t, Collider2D c2D){
+        yield return new WaitForSeconds(t);
+        Destroy(c2D.gameObject);
+    }
+
 }
