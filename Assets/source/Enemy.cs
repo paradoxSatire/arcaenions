@@ -18,6 +18,10 @@ public class Enemy : MonoBehaviour, iDamageable
         Debug.Log(healthBar);
     }
 
+void OnDrawGizmosSelected(){
+Gizmos.DrawWireSphere(transform.position, 5f);
+}
+
     // Update is called once per frame
     void Update()
     {

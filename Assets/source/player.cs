@@ -22,15 +22,21 @@ public class player : MonoBehaviour
 
     public Transform attackOriginMelee = null;
     public float attackRadiusMelee = 0.6f;
-    public float meleeDamage = 2f;
+    public float meleeDamage = 1f;
     public float attackDelay = 1.1f;
     public LayerMask enemyLayer = 8;
 
     private float timeUntilMeleeReady = 0;
 
+    private float currentHealth = 10f;
+
+    private Transform healthBar;
+    public float healthPool = 20f;
     // Start is called before the first frame update
     void Start()
     {
+        currentHealth = healthPool;
+        healthBar = transform.Find("HealthBar/bar");
         if (GetComponent<Rigidbody2D>()){
             rb2D = GetComponent<Rigidbody2D>();
         }
@@ -42,6 +48,9 @@ public class player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(healthBar.localScale.x > currentHealth/healthPool){
+            healthBar.localScale = new Vector2(healthBar.localScale.x - (.005f), 1f);
+        }
         GetInput();
         HandleAttack();
     }
@@ -69,6 +78,24 @@ Gizmos.DrawWireSphere(attackOriginMelee.position, attackRadiusMelee);
             sr.flipX = false;
             attackOriginMelee.localPosition = new Vector2(-.5f, 0);
         }    
+
+        if(moveintentionX < 0 && moveintentionY < 0){
+            attackOriginMelee.localPosition = new Vector2(-.5f, -.75f);
+        } else if(moveintentionX < 0 && moveintentionY == 0){
+            attackOriginMelee.localPosition = new Vector2(-.5f, 0.0f);
+        } else if(moveintentionX < 0 && moveintentionY > 0){
+            attackOriginMelee.localPosition = new Vector2(-.5f, .75f);
+        } else if(moveintentionX > 0 && moveintentionY < 0){
+            attackOriginMelee.localPosition = new Vector2(.5f, -.75f);
+        } else if(moveintentionX > 0 && moveintentionY == 0){
+            attackOriginMelee.localPosition = new Vector2(.5f, 0.0f);
+        } else if(moveintentionX > 0 && moveintentionY > 0){
+            attackOriginMelee.localPosition = new Vector2(.5f, .75f);
+        } else if(moveintentionX == 0 && moveintentionY > 0){
+            attackOriginMelee.localPosition = new Vector2(0.0f, .75f);
+        } else if(moveintentionX == 0 && moveintentionY < 0){
+            attackOriginMelee.localPosition = new Vector2(0.0f, -.75f);
+        }
 
         rb2D.velocity = new Vector2(moveintentionX * speed, moveintentionY * speed);
     }
